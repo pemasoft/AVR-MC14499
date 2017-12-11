@@ -1,9 +1,9 @@
 /*
- * 7-Segment display driver MC14499P connect to 8 bit AVR MCU (ATMEGA328)
- * Created: 11.12.2017
- * Author : Petr Matejovsky
- * License: GNU PUBLIC
- */ 
+* 7-Segment display driver MC14499P connect to 8 bit AVR MCU (ATMEGA328)
+* Created: 11.12.2017
+* Author : Petr Matejovsky
+* License: GNU PUBLIC
+*/
 
 // define CPU fervencies 16 MHz
 #define F_CPU 16000000UL
@@ -38,17 +38,9 @@
 
 void ShiftOut(uint8_t byte)
 {
-	for (int i = 0; i < 4; i++) 
-	{
-		if (((1 << (3 - i)) & byte) == 0)	// 4 bits in byte send to data pin
-		{
-			DATA_LOW();	
-		}
-		else
-		{
-			DATA_HIGH();	
-		}
-		
+	// 4 bits in byte send to data pin
+	for (int i = 0; i < 4; i++) {
+		(((1 << (3 - i)) & byte) == 0) ? DATA_LOW() : DATA_HIGH();
 		CLOCK_HIGH();	// clock impulse
 		_delay_us(5);
 		CLOCK_LOW();
@@ -77,8 +69,7 @@ void Display(uint8_t hours, uint8_t minutes)
 	uint8_t h2 = (uint8_t)(hours - (hours / 10) * 10);
 	uint8_t h1 = (uint8_t)(hours / 10);
 	
-	if (h1 == 0)
-	{
+	if (h1 == 0) {
 		h1 = 0b00001111;	// disable first digit
 	}
 	
@@ -95,31 +86,26 @@ int main(void)
 	// set port pins
 	OUTPUT_PINS();
 	
-	while (1)							// loop
-    {
+	while (1) {
 		Display(hours, minutes);
 		
-	    _delay_ms(500);
+		_delay_ms(500);
 		LED_OFF();
 		_delay_ms(500);
 		LED_ON();
 		
 		second ++;
 		
-		if (second == 60)
-		{
+		if (second == 60) {
 			second = 0;
 			minutes ++;
 		}
-		if (minutes == 60)
-		{
+		if (minutes == 60) {
 			minutes = 0;
 			hours ++;
 		}
-		if (hours == 24)
-		{
-			hours = 0;	
+		if (hours == 24) {
+			hours = 0;
 		}
-		
-    }
+	}
 }
